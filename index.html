@@ -12,6 +12,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
             background: url('bg-photo.jpg') no-repeat center center fixed;
@@ -41,7 +42,6 @@
             transition: all 0.5s ease;
         }
 
-        /* Эффект супер-радости для всей карточки */
         .card.joy-mode {
             box-shadow: 0 0 50px #ffcc00, 0 0 80px #ff0055;
             border-color: #ffcc00;
@@ -174,7 +174,6 @@
             width: 100%;
             margin-top: 10px;
             border-radius: 8px;
-            transition: transform 0.15s ease, background 0.2s, border-color 0.2s;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             position: relative;
             display: block;
@@ -205,9 +204,8 @@
             background: linear-gradient(180deg, #2ecc71 0%, #1e8449 100%);
             border-color: #27ae60;
             margin-top: 12px;
-            position: relative;
-            transition: top 0.2s ease, left 0.2s ease, transform 0.2s ease;
-            z-index: 10;
+            z-index: 9999;
+            transition: top 0.2s cubic-bezier(0.1, 0.8, 0.3, 1), left 0.2s cubic-bezier(0.1, 0.8, 0.3, 1);
         }
 
         .warning-text {
@@ -314,7 +312,6 @@
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Синтез звуковых эффектов напрямую без зависти от внешних mp3
         function playSound(type) {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
@@ -332,7 +329,6 @@
                 gain.gain.linearRampToValueAtTime(0, now + 0.08);
                 osc.start(now); osc.stop(now + 0.08);
             } else if (type === 'no') {
-                // Звук отторжения/ошибки
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.connect(gain); gain.connect(audioCtx.destination);
@@ -343,7 +339,6 @@
                 gain.gain.linearRampToValueAtTime(0, now + 0.25);
                 osc.start(now); osc.stop(now + 0.25);
             } else if (type === 'cheer' || type === 'joy') {
-                // Торжественные фанфары
                 const freqs = type === 'joy' ? [523.25, 659.25, 783.99, 1046.50, 1318.51] : [400, 500, 600, 800];
                 freqs.forEach((f, i) => {
                     const osc = audioCtx.createOscillator();
@@ -394,7 +389,6 @@
             nextStep(3);
         }
 
-        // Логика кнопки "Простить этого одноклеточного"
         let refuseClicks = 0;
         const warningMessages = [
             "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
@@ -426,49 +420,55 @@
             }
         }
 
-        // Логика убегающей кнопки "ТОЧНО ПРОСТИТЬ"
+        // Обновленная логика побега кнопки по всему экрану
         let escapeCount = 0;
         function initRunawayButton(btn) {
-            const escapeHandler = (e) => {
+            const moveBtn = (e) => {
                 if (escapeCount < 5) {
-                    e.preventDefault();
+                    if (e && e.type === 'touchstart') {
+                        e.preventDefault(); // Запрещаем нажатие на телефоне
+                    }
                     escapeCount++;
-                    
-                    // Случайное смещение по X и Y
-                    const x = (Math.random() - 0.5) * 160;
-                    const y = (Math.random() - 0.5) * 80;
-                    
-                    btn.style.left = `${x}px`;
-                    btn.style.top = `${y}px`;
+
+                    // Переводим кнопку в абсолютное положение по экрану
+                    btn.style.position = 'fixed';
+                    btn.style.width = '200px';
+
+                    // Вычисляем границы экрана
+                    const maxX = window.innerWidth - 220;
+                    const maxY = window.innerHeight - 60;
+
+                    const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+                    const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+
+                    btn.style.left = `${randomX}px`;
+                    btn.style.top = `${randomY}px`;
                 } else {
-                    // Возвращается на место, когда пользователь попытался нажать 5 раз
+                    // Возвращаем кнопку на родное место в карточке
+                    btn.style.position = 'relative';
                     btn.style.left = '0px';
                     btn.style.top = '0px';
-                    btn.style.boxShadow = '0 0 20px #2ecc71';
+                    btn.style.width = '100%';
+                    btn.style.boxShadow = '0 0 25px #2ecc71';
                 }
             };
 
-            // Наведение мыши (ПК) и касание пальцем (мобильные)
-            btn.addEventListener('mouseenter', escapeHandler);
-            btn.addEventListener('touchstart', escapeHandler, {passive: false});
+            btn.addEventListener('mouseover', moveBtn);
+            btn.addEventListener('touchstart', moveBtn, {passive: false});
         }
 
-        // Эффект полной радости
         function triggerFullJoy() {
             playSound('joy');
             triggerConfetti(true);
 
-            // Повторный залп конфетти через 300мс
             setTimeout(() => triggerConfetti(true), 300);
 
-            // Визуальный эффект карточки
             const card = document.getElementById('mainCard');
             card.classList.add('joy-mode');
 
             document.getElementById('joyBanner').style.display = 'block';
             document.getElementById('forgiveBtn').style.pointerEvents = 'none';
 
-            // Переход в Telegram через 2.2 секунды
             setTimeout(() => {
                 window.location.href = 'https://t.me/Braga_22';
             }, 2200);
