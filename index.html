@@ -24,7 +24,7 @@
             overflow: hidden;
         }
 
-        /* Карточка с эффектом свечения */
+        /* Карточка с затемнением */
         .card {
             position: relative;
             overflow: hidden;
@@ -34,7 +34,7 @@
             width: 90%;
             box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 15px 35px rgba(0,0,0,0.8);
             text-align: center;
-            background: rgba(15, 15, 20, 0.88);
+            background: rgba(10, 10, 15, 0.90); /* Ещё сильнее затемняем карточку */
             border: 3px solid #8a2be2;
             outline: 2px solid #d8bfd8;
             outline-offset: -6px;
@@ -50,7 +50,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
-            opacity: 0.35;
+            opacity: 0.25; /* Приглушаем видео фон, чтобы текст не сливался */
         }
 
         .step {
@@ -120,21 +120,23 @@
             font-size: 16px;
             line-height: 1.5;
             margin-bottom: 15px;
-            color: #f0f4f8;
-            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
         }
 
-        /* Текстура Человека-Паука (без белого контура) */
+        /* Полностью переработанный, яркий и супер-читаемый заголовок Спайди */
         .spidey-text {
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: linear-gradient(135deg, #ff1a1a 0%, #ff4d4d 45%, #1a66ff 55%, #0033cc 100%);
+            background: linear-gradient(180deg, #ff4d4d 0%, #ff0033 45%, #00d4ff 55%, #0066ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0px 2px 6px rgba(255, 0, 0, 0.6));
+            /* Неоновое подсвечивание снизу для контраста */
+            filter: drop-shadow(0px 0px 8px rgba(255, 0, 51, 0.9)) drop-shadow(0px 0px 12px rgba(0, 212, 255, 0.8));
             display: inline-block;
             padding: 0 4px;
+            font-size: 18px;
         }
 
         input[type="text"] {
@@ -242,9 +244,9 @@
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge">🎟️</div>
             <h2>БИЛЕТ!</h2>
-            <p>Ты выиграла билет в кино на фильм <span class="spidey-text">«Человек-паук Новый День»</span> на <b style="color: #00ffcc;">21 августа 16:25</b>!</p>
+            <p>Ты выиграла билет в кино на фильм <span class="spidey-text">«Человек-паук Новый День»</span> на <b style="color: #00ffcc; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);">21 августа 16:25</b>!</p>
             <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
-            <p style="font-size: 14px; color: #80deea; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
+            <p style="font-size: 15px; color: #80deea; margin-top: 15px; font-weight: 600;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
         </div>
 
     </div>
