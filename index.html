@@ -34,7 +34,7 @@
             width: 90%;
             box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 15px 35px rgba(0,0,0,0.8);
             text-align: center;
-            background: rgba(10, 10, 15, 0.90); /* Ещё сильнее затемняем карточку */
+            background: rgba(10, 10, 15, 0.90);
             border: 3px solid #8a2be2;
             outline: 2px solid #d8bfd8;
             outline-offset: -6px;
@@ -50,7 +50,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
-            opacity: 0.25; /* Приглушаем видео фон, чтобы текст не сливался */
+            opacity: 0.25;
         }
 
         .step {
@@ -124,7 +124,6 @@
             text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
         }
 
-        /* Полностью переработанный, яркий и супер-читаемый заголовок Спайди */
         .spidey-text {
             font-weight: 900;
             text-transform: uppercase;
@@ -132,7 +131,6 @@
             background: linear-gradient(180deg, #ff4d4d 0%, #ff0033 45%, #00d4ff 55%, #0066ff 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            /* Неоновое подсвечивание снизу для контраста */
             filter: drop-shadow(0px 0px 8px rgba(255, 0, 51, 0.9)) drop-shadow(0px 0px 12px rgba(0, 212, 255, 0.8));
             display: inline-block;
             padding: 0 4px;
@@ -174,6 +172,8 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             position: relative;
             overflow: hidden;
+            display: block;
+            text-decoration: none;
         }
 
         .btn-dark:hover {
@@ -184,6 +184,38 @@
 
         .btn-dark:active {
             transform: scale(0.96);
+        }
+
+        /* Стиль кнопки отказа/прощения */
+        .btn-refuse {
+            background: linear-gradient(180deg, #4a2a2a 0%, #2d1818 100%);
+            border-color: #ff3366;
+            margin-top: 8px;
+        }
+
+        .btn-refuse.error-shake {
+            animation: shakeRed 0.6s cubic-bezier(.36,.07,.19,.97) both;
+            background: linear-gradient(180deg, #e60000 0%, #800000 100%) !important;
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
+        }
+
+        .btn-forgive {
+            background: linear-gradient(180deg, #2ecc71 0%, #1e8449 100%);
+            border-color: #27ae60;
+            margin-top: 12px;
+            animation: popIn 0.4s ease forwards;
+        }
+
+        .warning-text {
+            color: #ff3344;
+            font-weight: 800;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+            display: none;
         }
 
         /* Анимации */
@@ -201,9 +233,20 @@
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.1); }
         }
+
+        @keyframes shakeRed {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
     </style>
 </head>
 <body>
+
+    <!-- Аудио элементы из прикрепленных файлов -->
+    <audio id="soundCheer" src="cheer.mp3" preload="auto"></audio>
+    <audio id="soundNo" src="no.mp3" preload="auto"></audio>
 
     <div class="card" id="mainCard">
         <video autoplay loop muted playsinline class="card-video">
@@ -239,7 +282,7 @@
             <button class="btn-dark" onclick="nextStep(4)">Далее 🕷️</button>
         </div>
 
-        <!-- Шаг 4: Кино -->
+        <!-- Шаг 4: Билет в кино -->
         <div class="step" id="step4">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge">🎟️</div>
@@ -247,6 +290,15 @@
             <p>Ты выиграла билет в кино на фильм <span class="spidey-text">«Человек-паук Новый День»</span> на <b style="color: #00ffcc; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);">21 августа 16:25</b>!</p>
             <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
             <p style="font-size: 15px; color: #80deea; margin-top: 15px; font-weight: 600;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
+
+            <!-- Кнопки действия -->
+            <a href="https://youtu.be/dT4Ikxceg7A" target="_blank" class="btn-dark" onclick="playWebAudio('click')">🎬 Посмотреть трейлер фильма</a>
+            
+            <button class="btn-dark btn-refuse" id="refuseBtn" onclick="handleRefuseClick()">Простить этого одноклеточного (не достоин)</button>
+            
+            <div class="warning-text" id="warningText"></div>
+
+            <a href="https://t.me/Braga_22" target="_blank" class="btn-dark btn-forgive" id="forgiveBtn" style="display: none;">ТОЧНО ПРОСТИТЬ ❤️</a>
         </div>
 
     </div>
@@ -254,11 +306,10 @@
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playSound(type) {
+        function playWebAudio(type) {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
-            
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
             osc.connect(gain);
@@ -283,41 +334,32 @@
                 gain.gain.linearRampToValueAtTime(0, now + 0.4);
                 osc.start(now);
                 osc.stop(now + 0.4);
-            } else if (type === 'fanfare') {
-                [523.25, 659.25, 783.99, 1046.50].forEach((freq, index) => {
-                    const subOsc = audioCtx.createOscillator();
-                    const subGain = audioCtx.createGain();
-                    subOsc.type = 'triangle';
-                    subOsc.frequency.setValueAtTime(freq, now + index * 0.08);
-                    subGain.gain.setValueAtTime(0.2, now + index * 0.08);
-                    subGain.gain.linearRampToValueAtTime(0, now + 0.6);
-                    subOsc.connect(subGain);
-                    subGain.connect(audioCtx.destination);
-                    subOsc.start(now + index * 0.08);
-                    subOsc.stop(now + 0.6);
-                });
             }
         }
 
         function triggerConfetti() {
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 80,
-                    spread: 70,
+                    particleCount: 90,
+                    spread: 80,
                     origin: { y: 0.6 }
                 });
             }
         }
 
         function nextStep(stepNumber) {
-            playSound(stepNumber === 4 ? 'fanfare' : 'click');
+            if (stepNumber === 4) {
+                // Воспроизводим прикрепленный звук аплодисментов/крика для карточки с билетом
+                const cheerAudio = document.getElementById('soundCheer');
+                cheerAudio.currentTime = 0;
+                cheerAudio.play().catch(() => playWebAudio('success'));
+                triggerConfetti();
+            } else {
+                playWebAudio('click');
+            }
             
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
             document.getElementById('step' + stepNumber).classList.add('active');
-
-            if (stepNumber === 4) {
-                triggerConfetti();
-            }
         }
 
         function saveChocolate() {
@@ -330,8 +372,44 @@
                 setTimeout(() => input.style.transform = 'translateX(0)', 200);
                 return;
             }
-            playSound('success');
+            playWebAudio('success');
             nextStep(3);
+        }
+
+        // Логика нажатия на кнопку "Простить этого одноклеточного"
+        let refuseClicks = 0;
+        const warningMessages = [
+            "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
+            "Я ТЕБЕ РУССКИМ ЯЗЫКОМ ГОВОРЮ НЕ НАДО. ВОТ ЗАЧЕМ ТЫ СНОВА НАЖАЛА",
+            "ЖЕНЩИНАА!! УБЕРИ РУКИ С ЭКРАНА И ПОКИНЬ САЙТ",
+            "Ты серьезно его готово простить, за такое ужасное поведение? ДИНАМИТ, ИГНОРИТ И ТЫ ГОТОВА ПРОСТО ПРОСТИТЬ"
+        ];
+
+        function handleRefuseClick() {
+            refuseClicks++;
+            const btn = document.getElementById('refuseBtn');
+            const warnText = document.getElementById('warningText');
+
+            // Воспроизведение звукового эффекта "Нет"
+            const noAudio = document.getElementById('soundNo');
+            noAudio.currentTime = 0;
+            noAudio.play().catch(() => {});
+
+            // Эффект встряски и красноты
+            btn.classList.remove('error-shake');
+            void btn.offsetWidth; // пересчет стилей для перезапуска анимации
+            btn.classList.add('error-shake');
+
+            // Показ предупреждающих сообщений
+            if (refuseClicks <= warningMessages.length) {
+                warnText.innerText = warningMessages[refuseClicks - 1];
+                warnText.style.display = 'block';
+            }
+
+            // На 4-й раз появляется кнопка «ТОЧНО ПРОСТИТЬ»
+            if (refuseClicks >= 4) {
+                document.getElementById('forgiveBtn').style.display = 'block';
+            }
         }
     </script>
 </body>
