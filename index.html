@@ -21,15 +21,32 @@
             align-items: center;    
         }
         .card {
-            background: rgba(255, 255, 255, 0.95);
+            position: relative;
+            overflow: hidden; /* Обрезает видео по закруглённым краям карточки */
             border-radius: 20px;
             padding: 30px 25px;
             max-width: 450px;
             width: 100%;
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+    text-align: center;
+}
+
+/* Стили для самого видео */
+.card-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Растягивает видео по всей площади карточки */
+    z-index: 0; /* Опускает видео под контент */
+}
+
+/* Чтобы текст и кнопки были поверх видео */
+.step {
+    position: relative;
+    z-index: 1;
+}
         }
         .step {
             display: none;
@@ -97,7 +114,11 @@
 <body>
 
     <div class="card">
-        
+    <video autoplay loop muted playsinline class="card-video">
+        <source src="card-bg-mp4.mp4" type="video/mp4">
+    </video>
+</div>
+                   
         <!-- Шаг 1: Приветствие -->
         <div class="step active" id="step1">
             <div class="badge">🎂</div>
