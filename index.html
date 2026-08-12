@@ -124,16 +124,15 @@
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
         }
 
-        /* Текстура Человека-Паука (Паутинный фирменный градиент + неоновый объём) */
+        /* Текстура Человека-Паука (без белого контура) */
         .spidey-text {
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
-            background: linear-gradient(135deg, #e60000 0%, #ff3333 45%, #0044ff 55%, #000099 100%);
+            background: linear-gradient(135deg, #ff1a1a 0%, #ff4d4d 45%, #1a66ff 55%, #0033cc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: none;
-            filter: drop-shadow(0px 2px 0px #ffffff) drop-shadow(0px 0px 8px rgba(230, 0, 0, 0.8));
+            filter: drop-shadow(0px 2px 6px rgba(255, 0, 0, 0.6));
             display: inline-block;
             padding: 0 4px;
         }
@@ -251,7 +250,6 @@
     </div>
 
     <script>
-        // Генерация звуковых эффектов без внешних файлов через Web Audio API
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playSound(type) {
@@ -276,15 +274,14 @@
                 osc.stop(now + 0.08);
             } else if (type === 'success') {
                 osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now); // C5
-                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
-                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                osc.frequency.setValueAtTime(783.99, now + 0.2);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.gain.linearRampToValueAtTime(0, now + 0.4);
                 osc.start(now);
                 osc.stop(now + 0.4);
             } else if (type === 'fanfare') {
-                // Праздничный аккорд для финального шага
                 [523.25, 659.25, 783.99, 1046.50].forEach((freq, index) => {
                     const subOsc = audioCtx.createOscillator();
                     const subGain = audioCtx.createGain();
@@ -324,7 +321,6 @@
         function saveChocolate() {
             const val = document.getElementById('chocName').value.trim();
             if (val === "") {
-                // Визуальная встряска поля ввода при ошибке
                 const input = document.getElementById('chocName');
                 input.style.borderColor = '#ff0055';
                 input.style.transform = 'translateX(-5px)';
