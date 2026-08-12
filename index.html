@@ -1,54 +1,152 @@
-<div class="container">
-        <div class="video-container">
-            <video autoplay loop muted playsinline>
-                <source src="Assets/card-bg.mp4" type="video/mp4">
-                Ваш браузер не поддерживает видео.
-            </video>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Днём Рождения, Настя! 🎉</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #333;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px 25px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .step {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out forwards;
+        }
+        .step.active {
+            display: block;
+        }
+        h1 {
+            color: #ff4b2b;
+            font-size: 26px;
+            margin-bottom: 15px;
+        }
+        h2 {
+            color: #ff416c;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+            color: #555;
+        }
+        .btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #ffccd5;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #ff416c;
+        }
+        .badge {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        
+        <!-- Шаг 1: Приветствие -->
+        <div class="step active" id="step1">
+            <div class="badge">🎂</div>
+            <h1>С Днём Рождения, Настя!</h1>
+            <button class="btn" onclick="nextStep(2)">Начать 🎁</button>
         </div>
 
-        <div id="forgiveMsg" class="msg-box">
-            Нажми на кнопку ниже...
+        <!-- Шаг 2: Купон на шоколадку -->
+        <div class="step" id="step2">
+            <div class="badge">🍫</div>
+            <h2>Тебе вручён купон!</h2>
+            <p>Купон даёт право на получение твоей любимой шоколадки!</p>
+            <input type="text" id="chocName" placeholder="Напиши название шоколадки...">
+            <button class="btn" onclick="saveChocolate()">Активировать купон ✨</button>
         </div>
 
-        <button id="forgiveBtn" class="btn" onclick="forgiveClick()">Простить</button>
-        <button id="finalForgiveBtn" class="btn btn-success" onclick="finalForgive()">ТОЧНО ПРОСТИТЬ ❤️</button>
+        <!-- Шаг 3: Подтверждение шоколадки + Переход -->
+        <div class="step" id="step3">
+            <div class="badge">✅</div>
+            <h2>Заявка принята!</h2>
+            <p>Отличный выбор! Твоя шоколадка уже скоро окажется у тебя в руках. Компания по доставке ООО <<Брагин Кирилл тупой даун>></p>
+            <p style="font-weight: bold; color: #ff416c;">Но это ещё не всё...</p>
+            <button class="btn" onclick="nextStep(4)">Далее 🕷️</button>
+        </div>
+
+        <!-- Шаг 4: Кино -->
+        <div class="step" id="step4">
+            <div class="badge">🎟️</div>
+            <h2>БИЛЕТ!</h2>
+            <p>Ты выиграла билет в кино на фильм <b>«Человек-паук Новый День»</b> на <b>21 августа 16:25</b>!</p>
+            <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
+            <p style="font-size: 14px; color: #888; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
+        </div>
+
     </div>
 
-    <audio id="rejectSound" src="Assets/sound-wow.mp3" preload="auto"></audio>
-
     <script>
-        let forgiveClicks = 0;
-        const forgiveMessages = [
-            "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
-            "Я ТЕБЕ РУССКИМ ЯЗЫКОМ ГОВОРЮ НЕ НАДО. ВОТ ЗАЧЕМ ТЫ СНОВА НАЖАЛА",
-            "ЖЕНЩИНАА!! УБЕРИ РУКИ С ЭКРАНА И ПОКИНЬ САЙТ",
-            "Ты серьезно его готово простить, за такое ужасное поведение? ДИНАМИТ, ИГНОРИТ И ТЫ ГОТОВА ПРОСТО ПРОСТИТЬ"
-        ];
-
-        function playSound(soundId) {
-            const audio = document.getElementById(soundId);
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(e => console.log("Audio play blocked: ", e));
-            }
+        function nextStep(stepNumber) {
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
         }
 
-        function forgiveClick() {
-            forgiveClicks++;
-            const msgEl = document.getElementById('forgiveMsg');
-            msgEl.textContent = forgiveMessages[Math.min(forgiveClicks, forgiveMessages.length) - 1];
-            const btn = document.getElementById('forgiveBtn');
-            btn.classList.remove('btn-reject-shake');
-            void btn.offsetWidth;
-            btn.classList.add('btn-reject-shake');
-            playSound('rejectSound');
-            if (forgiveClicks >= 4) {
-                document.getElementById('finalForgiveBtn').style.display = 'block';
+        function saveChocolate() {
+            const val = document.getElementById('chocName').value.trim();
+            if (val === "") {
+                alert("Пожалуйста, напиши название шоколадки!");
+                return;
             }
-        }
-
-        function finalForgive() {
-            alert('Спасибо! ❤️');
+            nextStep(3);
         }
     </script>
 </body>
