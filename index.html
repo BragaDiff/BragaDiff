@@ -21,7 +21,7 @@
             align-items: center;    
         }
 
-        /* Карточка с двойной фиолетовой рамкой */
+        /* Карточка с затемнённым фоном для читаемости текста */
         .card {
             position: relative;
             overflow: hidden;
@@ -29,9 +29,9 @@
             padding: 20px;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
             text-align: center;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.85); /* Затемнённая подложка */
             border: 3px solid #8a2be2;
             outline: 2px solid #d8bfd8;
             outline-offset: -6px;
@@ -46,6 +46,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
+            opacity: 0.5; /* Немного приглушаем само видео */
         }
 
         /* Шаги формы */
@@ -128,7 +129,7 @@
             border-color: #ff416c;
         }
 
-        /* Темные кнопки (как на скрине) */
+        /* Тёмные кнопки */
         .btn-dark {
             background: #3a3f47;
             color: #87ceeb;
@@ -179,7 +180,7 @@
             <button class="btn-dark" onclick="saveChocolate()">Активировать купон ✨</button>
         </div>
 
-        <!-- Шаг 3: Подтверждение шоколадки (под стиль со скриншота) -->
+        <!-- Шаг 3: Подтверждение шоколадки -->
         <div class="step" id="step3">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge-check">✓</div>
