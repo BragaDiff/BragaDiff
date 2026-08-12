@@ -1,4 +1,433 @@
-{ left: '20px', top: 'calc(100vh - 70px)' },                    // Нижний левый
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>С Днём Рождения, Настя! 🎉</title>
+    <!-- Подключаем библиотеку конфетти -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background: url('bg-photo.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;    
+            overflow: hidden;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            padding: 24px 20px;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 15px 35px rgba(0,0,0,0.8);
+            text-align: center;
+            background: rgba(10, 10, 15, 0.90);
+            border: 3px solid #8a2be2;
+            outline: 2px solid #d8bfd8;
+            outline-offset: -6px;
+            backdrop-filter: blur(4px);
+            transition: all 0.5s ease;
+        }
+
+        .card.joy-mode {
+            box-shadow: 0 0 50px #ffcc00, 0 0 80px #ff0055;
+            border-color: #ffcc00;
+            transform: scale(1.03);
+        }
+
+        .card-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.25;
+        }
+
+        .step {
+            position: relative;
+            z-index: 1;
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .top-banner {
+            background: #ffe600;
+            color: #000;
+            font-weight: 800;
+            padding: 6px 10px;
+            border: 2px dashed #000;
+            margin-bottom: 20px;
+            font-size: 14px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(255, 230, 0, 0.3);
+        }
+
+        .badge-check {
+            width: 44px;
+            height: 44px;
+            background: #2ecc71;
+            color: white;
+            font-size: 26px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.7);
+            animation: pulse 1.5s infinite;
+        }
+
+        .badge {
+            font-size: 55px;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 2.5s ease-in-out infinite;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 26px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+        }
+        
+        h2 {
+            color: #ffcc00;
+            font-size: 24px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 1);
+        }
+
+        .spidey-text {
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(180deg, #ff4d4d 0%, #ff0033 45%, #00d4ff 55%, #0066ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0px 0px 8px rgba(255, 0, 51, 0.9)) drop-shadow(0px 0px 12px rgba(0, 212, 255, 0.8));
+            display: inline-block;
+            padding: 0 4px;
+            font-size: 18px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            border: 2px solid #8a2be2;
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            outline: none;
+            font-weight: 600;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #ffcc00;
+            box-shadow: 0 0 12px rgba(255, 204, 0, 0.6);
+        }
+
+        .btn-dark {
+            background: linear-gradient(180deg, #3a3a4a 0%, #22222d 100%);
+            color: #ffffff;
+            border: 2px solid #8a2be2;
+            padding: 14px 28px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            position: relative;
+            display: block;
+            text-decoration: none;
+        }
+
+        .btn-dark:hover {
+            background: linear-gradient(180deg, #4a4a5a 0%, #32323d 100%);
+            border-color: #d8bfd8;
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
+        }
+
+        .btn-refuse {
+            background: linear-gradient(180deg, #4a2a2a 0%, #2d1818 100%);
+            border-color: #ff3366;
+            margin-top: 8px;
+        }
+
+        .btn-refuse.error-shake {
+            animation: shakeRed 0.6s cubic-bezier(.36,.07,.19,.97) both;
+            background: linear-gradient(180deg, #e60000 0%, #800000 100%) !important;
+            border-color: #ff0000 !important;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
+        }
+
+        /* Убегающая кнопка */
+        .btn-forgive {
+            background: linear-gradient(180deg, #2ecc71 0%, #1e8449 100%);
+            border-color: #27ae60;
+            margin-top: 12px;
+            z-index: 9999;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .warning-text {
+            color: #ff3344;
+            font-weight: 800;
+            font-size: 13px;
+            margin-top: 10px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 8px rgba(255, 0, 0, 0.6);
+            display: none;
+        }
+
+        .joy-banner {
+            font-size: 22px;
+            color: #ffcc00;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.9);
+            margin-top: 15px;
+            display: none;
+            animation: popIn 0.4s ease forwards;
+        }
+
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes shakeRed {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <video autoplay loop muted playsinline class="card-video">
+            <source src="card-bg.mp.mp4" type="video/mp4">
+        </video>
+                   
+        <!-- Шаг 1 -->
+        <div class="step active" id="step1">
+            <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
+            <div class="badge">🎂</div>
+            <h1>С Днём Рождения, Настя!</h1>
+            <button class="btn-dark" onclick="nextStep(2)">Начать 🎁</button>
+        </div>
+
+        <!-- Шаг 2 -->
+        <div class="step" id="step2">
+            <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
+            <div class="badge">🍫</div>
+            <h2>Тебе вручён купон!</h2>
+            <p>Купон даёт право на получение твоей любимой шоколадки!</p>
+            <input type="text" id="chocName" placeholder="Напиши название шоколадки...">
+            <button class="btn-dark" onclick="saveChocolate()">Активировать купон ✨</button>
+        </div>
+
+        <!-- Шаг 3 -->
+        <div class="step" id="step3">
+            <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
+            <div class="badge-check">✓</div>
+            <h2>Заявка принята!</h2>
+            <p>Екселент! Твоя шоколадка уже скоро окажется у тебя в руках.</p>
+            <p style="font-size: 13px; color: #cfd8dc;">Компания доставки ООО «ЛЖИВАЯ КОНТОРА БРАГИНА КИРИЛЛА ПО ЛОМАНИЮ ТОВАРОВ И НЕ ТОЛЬКО»</p>
+            <p style="color: #ffcc00; font-weight: bold; margin-top: 10px;">Но это ещё не всё...</p>
+            <button class="btn-dark" onclick="nextStep(4)">Далее 🕷️</button>
+        </div>
+
+        <!-- Шаг 4 -->
+        <div class="step" id="step4">
+            <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
+            <div class="badge">🎟️</div>
+            <h2>БИЛЕТ!</h2>
+            <p>Ты выиграла билет в кино на фильм <span class="spidey-text">«Человек-паук Новый День»</span> на <b style="color: #00ffcc; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);">21 августа 16:25</b>!</p>
+            <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
+
+            <a href="https://youtu.be/dT4Ikxceg7A" target="_blank" class="btn-dark" onclick="playSound('click')">🎬 Посмотреть трейлер фильма</a>
+            
+            <button class="btn-dark btn-refuse" id="refuseBtn" onclick="handleRefuseClick()">Простить этого одноклеточного (не достоин)</button>
+            
+            <div class="warning-text" id="warningText"></div>
+
+            <button class="btn-dark btn-forgive" id="forgiveBtn" style="display: none;">ТОЧНО ПРОСТИТЬ ❤️</button>
+            
+            <div class="joy-banner" id="joyBanner">УРААА! СПАСИБО! 🎉🥳</div>
+        </div>
+
+    </div>
+
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const now = audioCtx.currentTime;
+
+            if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, now);
+                osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.08);
+                osc.start(now); osc.stop(now + 0.08);
+            } else if (type === 'no') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
+            } else if (type === 'cheer' || type === 'joy') {
+                const freqs = type === 'joy' ? [523.25, 659.25, 783.99, 1046.50, 1318.51] : [400, 500, 600, 800];
+                freqs.forEach((f, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, now + i * 0.07);
+                    gain.gain.setValueAtTime(0.25, now + i * 0.07);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.8);
+                    osc.start(now + i * 0.07); osc.stop(now + 0.8);
+                });
+            }
+        }
+
+        function triggerConfetti(isBig = false) {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: isBig ? 180 : 80,
+                    spread: isBig ? 120 : 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function nextStep(stepNumber) {
+            if (stepNumber === 4) {
+                playSound('cheer');
+                triggerConfetti(false);
+            } else {
+                playSound('click');
+            }
+            
+            document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+            document.getElementById('step' + stepNumber).classList.add('active');
+        }
+
+        function saveChocolate() {
+            const val = document.getElementById('chocName').value.trim();
+            if (val === "") {
+                const input = document.getElementById('chocName');
+                input.style.borderColor = '#ff0055';
+                input.style.transform = 'translateX(-5px)';
+                setTimeout(() => input.style.transform = 'translateX(5px)', 100);
+                setTimeout(() => input.style.transform = 'translateX(0)', 200);
+                return;
+            }
+            playSound('click');
+            nextStep(3);
+        }
+
+        let refuseClicks = 0;
+        const warningMessages = [
+            "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
+            "Я ТЕБЕ РУССКИМ ЯЗЫКОМ ГОВОРЮ НЕ НАДО. ВОТ ЗАЧЕМ ТЫ СНОВА НАЖАЛА",
+            "ЖЕНЩИНАА!! УБЕРИ РУКИ С ЭКРАНА И ПОКИНЬ САЙТ",
+            "Ты серьезно его готово простить, за такое ужасное поведение? ДИНАМИТ, ИГНОРИТ И ТЫ ГОТОВА ПРОСТО ПРОСТИТЬ"
+        ];
+
+        function handleRefuseClick() {
+            refuseClicks++;
+            const btn = document.getElementById('refuseBtn');
+            const warnText = document.getElementById('warningText');
+
+            playSound('no');
+
+            btn.classList.remove('error-shake');
+            void btn.offsetWidth;
+            btn.classList.add('error-shake');
+
+            if (refuseClicks <= warningMessages.length) {
+                warnText.innerText = warningMessages[refuseClicks - 1];
+                warnText.style.display = 'block';
+            }
+
+            if (refuseClicks >= 4) {
+                const forgiveBtn = document.getElementById('forgiveBtn');
+                forgiveBtn.style.display = 'block';
+                initRunawayButton(forgiveBtn);
+            }
+        }
+
+        // Логика перемещения кнопки по углам
+        let escapeCount = 0;
+
+        function initRunawayButton(btn) {
+            const corners = [
+                { left: '20px', top: '20px' },                                  // Верхний левый
+                { left: 'calc(100vw - 220px)', top: '20px' },                   // Верхний правый
+                { left: '20px', top: 'calc(100vh - 70px)' },                    // Нижний левый
                 { left: 'calc(100vw - 220px)', top: 'calc(100vh - 70px)' },     // Нижний правый
                 { left: 'calc(50vw - 100px)', top: 'calc(50vh - 25px)' }        // Центр экрана
             ];
