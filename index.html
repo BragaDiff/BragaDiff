@@ -27,28 +27,26 @@
             padding: 30px 25px;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    text-align: center;
-}
-
-/* Стили для самого видео */
-.card-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Растягивает видео по всей площади карточки */
-    z-index: 0; /* Опускает видео под контент */
-}
-
-/* Чтобы текст и кнопки были поверх видео */
-.step {
-    position: relative;
-    z-index: 1;
-}
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.4); /* Полупрозрачная подложка поверх видео для читаемости текста */
         }
+
+        /* Стили для видео */
+        .card-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Растягивает видео по всей площади карточки */
+            z-index: 0; /* Опускает видео под контент */
+        }
+
+        /* Чтобы текст и кнопки были поверх видео */
         .step {
+            position: relative;
+            z-index: 1;
             display: none;
             animation: fadeIn 0.5s ease-in-out forwards;
         }
@@ -69,7 +67,7 @@
             font-size: 16px;
             line-height: 1.5;
             margin-bottom: 20px;
-            color: #555;
+            color: #ffffff;
         }
         .btn {
             background: linear-gradient(to right, #ff416c, #ff4b2b);
@@ -114,10 +112,9 @@
 <body>
 
     <div class="card">
-    <video autoplay loop muted playsinline class="card-video">
-        <source src="card-bg-mp4.mp4" type="video/mp4">
-    </video>
-</div>
+        <video autoplay loop muted playsinline class="card-video">
+            <source src="card-bg-mp4.mp4" type="video/mp4">
+        </video>
                    
         <!-- Шаг 1: Приветствие -->
         <div class="step active" id="step1">
@@ -139,7 +136,7 @@
         <div class="step" id="step3">
             <div class="badge">✅</div>
             <h2>Заявка принята!</h2>
-            <p>Отличный выбор! Твоя шоколадка уже скоро окажется у тебя в руках. Компания по доставке ООО <<Брагин Кирилл тупой даун>></p>
+            <p>Отличный выбор! Твоя шоколадка уже скоро окажется у тебя в руках. Компания по доставке ООО «Брагин Кирилл»</p>
             <p style="font-weight: bold; color: #ff416c;">Но это ещё не всё...</p>
             <button class="btn" onclick="nextStep(4)">Далее 🕷️</button>
         </div>
@@ -150,7 +147,7 @@
             <h2>БИЛЕТ!</h2>
             <p>Ты выиграла билет в кино на фильм <b>«Человек-паук Новый День»</b> на <b>21 августа 16:25</b>!</p>
             <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
-            <p style="font-size: 14px; color: #888; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
+            <p style="font-size: 14px; color: #ddd; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
         </div>
 
     </div>
