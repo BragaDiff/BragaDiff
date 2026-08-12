@@ -32,6 +32,7 @@
             padding: 24px 20px;
             max-width: 450px;
             width: 90%;
+            min-height: 480px;
             box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 15px 35px rgba(0,0,0,0.8);
             text-align: center;
             background: rgba(10, 10, 15, 0.90);
@@ -63,6 +64,7 @@
             position: relative;
             z-index: 1;
             display: none;
+            height: 100%;
         }
         
         .step.active {
@@ -199,12 +201,12 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
         }
 
-        /* Убегающая кнопка */
+        /* Убегающая кнопка строго внутри карточки */
         .btn-forgive {
             background: linear-gradient(180deg, #2ecc71 0%, #1e8449 100%);
             border-color: #27ae60;
             margin-top: 12px;
-            z-index: 9999;
+            z-index: 10;
             transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -420,48 +422,57 @@
             }
         }
 
-        // Логика перемещения кнопки по углам
+        // Логика полета кнопки СТРОГО ВНУТРИ ПОДЛОЖКИ (карточки)
         let escapeCount = 0;
 
         function initRunawayButton(btn) {
-            const corners = [
-                { left: '20px', top: '20px' },                                  // Верхний левый
-                { left: 'calc(100vw - 220px)', top: '20px' },                   // Верхний правый
-                { left: '20px', top: 'calc(100vh - 70px)' },                    // Нижний левый
-                { left: 'calc(100vw - 220px)', top: 'calc(100vh - 70px)' },     // Нижний правый
-                { left: 'calc(50vw - 100px)', top: 'calc(50vh - 25px)' }        // Центр экрана
-            ];
+            const card = document.getElementById('mainCard');
 
-            const runawayAction = (e) => {
+            const moveInsideCard = (e) => {
                 if (escapeCount < 5) {
                     if (e) e.preventDefault();
                     playSound('no');
 
-                    btn.style.position = 'fixed';
-                    btn.style.width = '200px';
+                    const cardRect = card.getBoundingClientRect();
+                    
+                    // Позиционируем относительно карточки
+                    btn.style.position = 'absolute';
+                    btn.style.width = '180px';
+                    
+                    const btnWidth = 180;
+                    const btnHeight = 48;
+                    const padding = 15;
 
-                    const corner = corners[escapeCount];
-                    btn.style.left = corner.left;
-                    btn.style.top = corner.top;
+                    // Угловые координаты внутри самой карточки
+                    const internalCorners = [
+                        { left: `${padding}px`, top: `${padding}px` },                                                          // Верхний левый
+                        { left: `${cardRect.width - btnWidth - padding}px`, top: `${padding}px` },                              // Верхний правый
+                        { left: `${padding}px`, top: `${cardRect.height - btnHeight - padding}px` },                            // Нижний левый
+                        { left: `${cardRect.width - btnWidth - padding}px`, top: `${cardRect.height - btnHeight - padding}px` },// Нижний правый
+                        { left: `${(cardRect.width - btnWidth) / 2}px`, top: `${(cardRect.height - btnHeight) / 2}px` }        // Центр карточки
+                    ];
+
+                    const pos = internalCorners[escapeCount];
+                    btn.style.left = pos.left;
+                    btn.style.top = pos.top;
 
                     escapeCount++;
                 } else {
-                    // Возвращаем кнопку обратно на плашку и даём возможность её активировать
+                    // Возвращаем кнопку на базовое место в тексте подложки
                     btn.style.position = 'relative';
                     btn.style.left = '0px';
                     btn.style.top = '0px';
                     btn.style.width = '100%';
                     btn.style.boxShadow = '0 0 25px #2ecc71';
 
-                    // Подключаем финальный победный клик
+                    // Активируем победный клик
                     btn.onclick = triggerFullJoy;
                 }
             };
 
-            // Перехват любого клика или нажатия для телепортации
-            btn.addEventListener('touchstart', runawayAction, {passive: false});
-            btn.addEventListener('click', runawayAction);
-            btn.addEventListener('mouseenter', runawayAction);
+            btn.addEventListener('touchstart', moveInsideCard, {passive: false});
+            btn.addEventListener('click', moveInsideCard);
+            btn.addEventListener('mouseenter', moveInsideCard);
         }
 
         function triggerFullJoy() {
