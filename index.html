@@ -21,7 +21,7 @@
             align-items: center;    
         }
 
-        /* Карточка с затемнённым фоном для читаемости текста */
+        /* Карточка с полупрозрачным фоном */
         .card {
             position: relative;
             overflow: hidden;
@@ -29,9 +29,9 @@
             padding: 20px;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8);
             text-align: center;
-            background: rgba(0, 0, 0, 0.85); /* Затемнённая подложка */
+            background: rgba(15, 15, 20, 0.85); /* Затемнённый глубокий фон */
             border: 3px solid #8a2be2;
             outline: 2px solid #d8bfd8;
             outline-offset: -6px;
@@ -46,7 +46,7 @@
             height: 100%;
             object-fit: cover;
             z-index: 0;
-            opacity: 0.5; /* Немного приглушаем само видео */
+            opacity: 0.4; /* Приглушаем видео, чтобы текст выходил на передний план */
         }
 
         /* Шаги формы */
@@ -62,11 +62,11 @@
 
         /* Жёлтая плашка вверху */
         .top-banner {
-            background: #c0c000;
-            color: #ff0000;
-            font-weight: bold;
+            background: #ffe600;
+            color: #000;
+            font-weight: 800;
             padding: 6px 10px;
-            border: 2px dashed #0000ff;
+            border: 2px dashed #000;
             margin-bottom: 20px;
             font-size: 14px;
             letter-spacing: 1px;
@@ -75,17 +75,18 @@
 
         /* Зелёный значок галочки */
         .badge-check {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             background: #2ecc71;
             color: white;
-            font-size: 22px;
+            font-size: 24px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 6px;
             margin-bottom: 15px;
             font-weight: bold;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.5);
         }
 
         .badge {
@@ -93,25 +94,34 @@
             margin-bottom: 15px;
         }
 
-        /* Заголовки */
+        /* Контрастные и читаемые заголовки */
         h1 {
-            color: #ff4b2b;
+            color: #ffffff;
             font-size: 26px;
             margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9), 0 0 10px rgba(255, 255, 255, 0.2);
         }
         h2 {
-            color: #ff6600;
-            font-size: 22px;
-            text-decoration: underline;
+            color: #ffcc00; /* Ярко-жёлтый заголовок отлично читается */
+            font-size: 24px;
             margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
         }
 
-        /* Текст */
+        /* Читаемый текст */
         p {
-            font-size: 15px;
-            line-height: 1.4;
+            font-size: 16px;
+            line-height: 1.5;
             margin-bottom: 15px;
-            color: #87ceeb;
+            color: #f0f4f8; /* Чёткий белый с легким свечением */
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+        }
+
+        /* Выделение отдельных моментов */
+        p b {
+            color: #00ffcc; /* Неоново-бирюзовый для дат и названий */
         }
 
         /* Поле ввода */
@@ -119,31 +129,33 @@
             width: 100%;
             padding: 12px 15px;
             font-size: 16px;
-            border: 2px solid #ffccd5;
-            border-radius: 10px;
+            border: 2px solid #8a2be2;
+            background: rgba(255, 255, 255, 0.95);
+            color: #000;
+            border-radius: 8px;
             margin-bottom: 15px;
             outline: none;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus {
-            border-color: #ff416c;
+            font-weight: 600;
         }
 
-        /* Тёмные кнопки */
+        /* Чёткие кнопки */
         .btn-dark {
-            background: #3a3f47;
-            color: #87ceeb;
-            border: 2px solid #1a1a1a;
+            background: #2a2a35;
+            color: #ffffff;
+            border: 2px solid #8a2be2;
             padding: 12px 28px;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
-            transition: background 0.2s;
+            border-radius: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         }
         .btn-dark:hover {
-            background: #4a5059;
+            background: #3a3a4a;
+            border-color: #d8bfd8;
         }
         .btn-dark:active {
             transform: scale(0.98);
@@ -185,9 +197,10 @@
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge-check">✓</div>
             <h2>Заявка принята!</h2>
-            <p>Екселент! Твоя шоколадка уже скоро окажется у тебя в руках. Компания доставки ООО «ЛЖИВАЯ КОНТОРА БРАГИНА КИРИЛЛА ПО ЛОМАНИЮ ТОВАРОВ И НЕ ТОЛЬКО»</p>
-            <p style="color: #ff6600; text-decoration: none; font-weight: bold;">Но это ещё не всё...</p>
-            <button class="btn-dark" onclick="nextStep(4)">Далее</button>
+            <p>Екселент! Твоя шоколадка уже скоро окажется у тебя в руках.</p>
+            <p style="font-size: 14px; color: #cfd8dc;">Компания доставки ООО «ЛЖИВАЯ КОНТОРА БРАГИНА КИРИЛЛА ПО ЛОМАНИЮ ТОВАРОВ И НЕ ТОЛЬКО»</p>
+            <p style="color: #ffcc00; font-weight: bold; margin-top: 10px;">Но это ещё не всё...</p>
+            <button class="btn-dark" onclick="nextStep(4)">Далее 🕷️</button>
         </div>
 
         <!-- Шаг 4: Кино -->
@@ -197,7 +210,7 @@
             <h2>БИЛЕТ!</h2>
             <p>Ты выиграла билет в кино на фильм <b>«Человек-паук Новый День»</b> на <b>21 августа 16:25</b>!</p>
             <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
-            <p style="font-size: 14px; color: #87ceeb; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
+            <p style="font-size: 14px; color: #80deea; margin-top: 15px;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
         </div>
 
     </div>
