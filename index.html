@@ -24,7 +24,6 @@
             overflow: hidden;
         }
 
-        /* Карточка с затемнением */
         .card {
             position: relative;
             overflow: hidden;
@@ -39,7 +38,14 @@
             outline: 2px solid #d8bfd8;
             outline-offset: -6px;
             backdrop-filter: blur(4px);
-            transition: transform 0.3s ease;
+            transition: all 0.5s ease;
+        }
+
+        /* Эффект супер-радости для всей карточки */
+        .card.joy-mode {
+            box-shadow: 0 0 50px #ffcc00, 0 0 80px #ff0055;
+            border-color: #ffcc00;
+            transform: scale(1.03);
         }
 
         .card-video {
@@ -168,10 +174,9 @@
             width: 100%;
             margin-top: 10px;
             border-radius: 8px;
-            transition: all 0.2s;
+            transition: transform 0.15s ease, background 0.2s, border-color 0.2s;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
             display: block;
             text-decoration: none;
         }
@@ -182,11 +187,6 @@
             box-shadow: 0 0 15px rgba(138, 43, 226, 0.6);
         }
 
-        .btn-dark:active {
-            transform: scale(0.96);
-        }
-
-        /* Стиль кнопки отказа/прощения */
         .btn-refuse {
             background: linear-gradient(180deg, #4a2a2a 0%, #2d1818 100%);
             border-color: #ff3366;
@@ -200,17 +200,20 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important;
         }
 
+        /* Убегающая кнопка */
         .btn-forgive {
             background: linear-gradient(180deg, #2ecc71 0%, #1e8449 100%);
             border-color: #27ae60;
             margin-top: 12px;
-            animation: popIn 0.4s ease forwards;
+            position: relative;
+            transition: top 0.2s ease, left 0.2s ease, transform 0.2s ease;
+            z-index: 10;
         }
 
         .warning-text {
             color: #ff3344;
             font-weight: 800;
-            font-size: 14px;
+            font-size: 13px;
             margin-top: 10px;
             margin-bottom: 5px;
             text-transform: uppercase;
@@ -218,7 +221,16 @@
             display: none;
         }
 
-        /* Анимации */
+        .joy-banner {
+            font-size: 22px;
+            color: #ffcc00;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(255, 204, 0, 0.9);
+            margin-top: 15px;
+            display: none;
+            animation: popIn 0.4s ease forwards;
+        }
+
         @keyframes popIn {
             0% { opacity: 0; transform: scale(0.8) translateY(20px); }
             100% { opacity: 1; transform: scale(1) translateY(0); }
@@ -244,16 +256,12 @@
 </head>
 <body>
 
-    <!-- Аудио элементы из прикрепленных файлов -->
-    <audio id="soundCheer" src="cheer.mp3" preload="auto"></audio>
-    <audio id="soundNo" src="no.mp3" preload="auto"></audio>
-
     <div class="card" id="mainCard">
         <video autoplay loop muted playsinline class="card-video">
             <source src="card-bg.mp.mp4" type="video/mp4">
         </video>
                    
-        <!-- Шаг 1: Приветствие -->
+        <!-- Шаг 1 -->
         <div class="step active" id="step1">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge">🎂</div>
@@ -261,7 +269,7 @@
             <button class="btn-dark" onclick="nextStep(2)">Начать 🎁</button>
         </div>
 
-        <!-- Шаг 2: Купон на шоколадку -->
+        <!-- Шаг 2 -->
         <div class="step" id="step2">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge">🍫</div>
@@ -271,7 +279,7 @@
             <button class="btn-dark" onclick="saveChocolate()">Активировать купон ✨</button>
         </div>
 
-        <!-- Шаг 3: Подтверждение шоколадки -->
+        <!-- Шаг 3 -->
         <div class="step" id="step3">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge-check">✓</div>
@@ -282,23 +290,23 @@
             <button class="btn-dark" onclick="nextStep(4)">Далее 🕷️</button>
         </div>
 
-        <!-- Шаг 4: Билет в кино -->
+        <!-- Шаг 4 -->
         <div class="step" id="step4">
             <div class="top-banner">ПРОСТИ МЕНЯ НАСТЯ</div>
             <div class="badge">🎟️</div>
             <h2>БИЛЕТ!</h2>
             <p>Ты выиграла билет в кино на фильм <span class="spidey-text">«Человек-паук Новый День»</span> на <b style="color: #00ffcc; text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);">21 августа 16:25</b>!</p>
             <p>Меня можешь выгнать из кинотеатра за плохое поведение</p>
-            <p style="font-size: 15px; color: #80deea; margin-top: 15px; font-weight: 600;">Напиши мне в Telegram, когда посмотришь этот сайт)</p>
 
-            <!-- Кнопки действия -->
-            <a href="https://youtu.be/dT4Ikxceg7A" target="_blank" class="btn-dark" onclick="playWebAudio('click')">🎬 Посмотреть трейлер фильма</a>
+            <a href="https://youtu.be/dT4Ikxceg7A" target="_blank" class="btn-dark" onclick="playSound('click')">🎬 Посмотреть трейлер фильма</a>
             
             <button class="btn-dark btn-refuse" id="refuseBtn" onclick="handleRefuseClick()">Простить этого одноклеточного (не достоин)</button>
             
             <div class="warning-text" id="warningText"></div>
 
-            <a href="https://t.me/Braga_22" target="_blank" class="btn-dark btn-forgive" id="forgiveBtn" style="display: none;">ТОЧНО ПРОСТИТЬ ❤️</a>
+            <button class="btn-dark btn-forgive" id="forgiveBtn" style="display: none;" onclick="triggerFullJoy()">ТОЧНО ПРОСТИТЬ ❤️</button>
+            
+            <div class="joy-banner" id="joyBanner">УРААА! СПАСИБО! 🎉🥳</div>
         </div>
 
     </div>
@@ -306,42 +314,55 @@
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playWebAudio(type) {
+        // Синтез звуковых эффектов напрямую без зависти от внешних mp3
+        function playSound(type) {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-
             const now = audioCtx.currentTime;
 
             if (type === 'click') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, now);
                 osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.gain.linearRampToValueAtTime(0, now + 0.08);
-                osc.start(now);
-                osc.stop(now + 0.08);
-            } else if (type === 'success') {
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.1);
-                osc.frequency.setValueAtTime(783.99, now + 0.2);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.linearRampToValueAtTime(0, now + 0.4);
-                osc.start(now);
-                osc.stop(now + 0.4);
+                osc.start(now); osc.stop(now + 0.08);
+            } else if (type === 'no') {
+                // Звук отторжения/ошибки
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.4, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
+            } else if (type === 'cheer' || type === 'joy') {
+                // Торжественные фанфары
+                const freqs = type === 'joy' ? [523.25, 659.25, 783.99, 1046.50, 1318.51] : [400, 500, 600, 800];
+                freqs.forEach((f, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain); gain.connect(audioCtx.destination);
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(f, now + i * 0.07);
+                    gain.gain.setValueAtTime(0.25, now + i * 0.07);
+                    gain.gain.linearRampToValueAtTime(0, now + 0.8);
+                    osc.start(now + i * 0.07); osc.stop(now + 0.8);
+                });
             }
         }
 
-        function triggerConfetti() {
+        function triggerConfetti(isBig = false) {
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 90,
-                    spread: 80,
+                    particleCount: isBig ? 180 : 80,
+                    spread: isBig ? 120 : 70,
                     origin: { y: 0.6 }
                 });
             }
@@ -349,13 +370,10 @@
 
         function nextStep(stepNumber) {
             if (stepNumber === 4) {
-                // Воспроизводим прикрепленный звук аплодисментов/крика для карточки с билетом
-                const cheerAudio = document.getElementById('soundCheer');
-                cheerAudio.currentTime = 0;
-                cheerAudio.play().catch(() => playWebAudio('success'));
-                triggerConfetti();
+                playSound('cheer');
+                triggerConfetti(false);
             } else {
-                playWebAudio('click');
+                playSound('click');
             }
             
             document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
@@ -372,11 +390,11 @@
                 setTimeout(() => input.style.transform = 'translateX(0)', 200);
                 return;
             }
-            playWebAudio('success');
+            playSound('click');
             nextStep(3);
         }
 
-        // Логика нажатия на кнопку "Простить этого одноклеточного"
+        // Логика кнопки "Простить этого одноклеточного"
         let refuseClicks = 0;
         const warningMessages = [
             "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
@@ -390,26 +408,70 @@
             const btn = document.getElementById('refuseBtn');
             const warnText = document.getElementById('warningText');
 
-            // Воспроизведение звукового эффекта "Нет"
-            const noAudio = document.getElementById('soundNo');
-            noAudio.currentTime = 0;
-            noAudio.play().catch(() => {});
+            playSound('no');
 
-            // Эффект встряски и красноты
             btn.classList.remove('error-shake');
-            void btn.offsetWidth; // пересчет стилей для перезапуска анимации
+            void btn.offsetWidth;
             btn.classList.add('error-shake');
 
-            // Показ предупреждающих сообщений
             if (refuseClicks <= warningMessages.length) {
                 warnText.innerText = warningMessages[refuseClicks - 1];
                 warnText.style.display = 'block';
             }
 
-            // На 4-й раз появляется кнопка «ТОЧНО ПРОСТИТЬ»
             if (refuseClicks >= 4) {
-                document.getElementById('forgiveBtn').style.display = 'block';
+                const forgiveBtn = document.getElementById('forgiveBtn');
+                forgiveBtn.style.display = 'block';
+                initRunawayButton(forgiveBtn);
             }
+        }
+
+        // Логика убегающей кнопки "ТОЧНО ПРОСТИТЬ"
+        let escapeCount = 0;
+        function initRunawayButton(btn) {
+            const escapeHandler = (e) => {
+                if (escapeCount < 5) {
+                    e.preventDefault();
+                    escapeCount++;
+                    
+                    // Случайное смещение по X и Y
+                    const x = (Math.random() - 0.5) * 160;
+                    const y = (Math.random() - 0.5) * 80;
+                    
+                    btn.style.left = `${x}px`;
+                    btn.style.top = `${y}px`;
+                } else {
+                    // Возвращается на место, когда пользователь попытался нажать 5 раз
+                    btn.style.left = '0px';
+                    btn.style.top = '0px';
+                    btn.style.boxShadow = '0 0 20px #2ecc71';
+                }
+            };
+
+            // Наведение мыши (ПК) и касание пальцем (мобильные)
+            btn.addEventListener('mouseenter', escapeHandler);
+            btn.addEventListener('touchstart', escapeHandler, {passive: false});
+        }
+
+        // Эффект полной радости
+        function triggerFullJoy() {
+            playSound('joy');
+            triggerConfetti(true);
+
+            // Повторный залп конфетти через 300мс
+            setTimeout(() => triggerConfetti(true), 300);
+
+            // Визуальный эффект карточки
+            const card = document.getElementById('mainCard');
+            card.classList.add('joy-mode');
+
+            document.getElementById('joyBanner').style.display = 'block';
+            document.getElementById('forgiveBtn').style.pointerEvents = 'none';
+
+            // Переход в Telegram через 2.2 секунды
+            setTimeout(() => {
+                window.location.href = 'https://t.me/Braga_22';
+            }, 2200);
         }
     </script>
 </body>
