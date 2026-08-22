@@ -1,66 +1,55 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Админка Очереди</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Библиотека для подключения к DonationAlerts -->
-    <script src="https://unpkg.com/centrifuge@3.1.0/dist/centrifuge.min.js"></script>
-</head>
-<body class="bg-gray-100 text-gray-900 p-6">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">⚙️ Управление очередью</h1>
-        
-        <!-- НАСТРОЙКИ DONATIONALERTS -->
-        <div class="bg-orange-50 border border-orange-200 p-4 rounded-lg shadow-sm mb-6">
-            <h2 class="font-bold text-orange-600 flex items-center gap-2 mb-3">
-                🔌 Подключение DonationAlerts
-            </h2>
-            <div class="flex gap-4 items-center">
-                <input type="password" id="da-token-input" placeholder="Вставьте токен виджета из DA..." class="border p-2 rounded flex-1 focus:ring-2 focus:ring-orange-500 outline-none">
-                <button onclick="saveDAToken()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded shadow transition">
-                    Подключить
-                </button>
-            </div>
-            <p id="da-status" class="text-sm mt-2 text-gray-500">Статус: <span class="font-bold text-red-500">Отключено</span></p>
+<div class="container">
+        <div class="video-container">
+            <video autoplay loop muted playsinline>
+                <source src="Assets/card-bg.mp4" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
         </div>
 
-        <!-- Блок добавления игры стримером -->
-        <div class="bg-white p-4 rounded-lg shadow-lg mb-6 flex gap-4">
-            <input type="text" id="streamer-game-input" placeholder="Название игры..." class="border p-2 rounded flex-1 focus:ring-2 focus:ring-purple-500 outline-none">
-            <button onclick="addStreamerGame()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded shadow">
-                + Добавить вне очереди
-            </button>
+        <div id="forgiveMsg" class="msg-box">
+            Нажми на кнопку ниже...
         </div>
 
-        <!-- Кнопки управления -->
-        <div class="mb-6 flex gap-4">
-            <button onclick="simulateDonationAlerts()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
-                💸 Тестовый донат
-            </button>
-            <button onclick="clearAll()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
-                🗑 Очистить базу
-            </button>
-        </div>
-
-        <!-- Таблица админа -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-4">Игра</th>
-                        <th class="p-4">Заказал</th>
-                        <th class="p-4">Донат</th>
-                        <th class="p-4">Статус</th>
-                        <th class="p-4">Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-list" class="divide-y divide-gray-100">
-                    <!-- Рендерится через JS -->
-                </tbody>
-            </table>
-        </div>
+        <button id="forgiveBtn" class="btn" onclick="forgiveClick()">Простить</button>
+        <button id="finalForgiveBtn" class="btn btn-success" onclick="finalForgive()">ТОЧНО ПРОСТИТЬ ❤️</button>
     </div>
-    <script src="script.js"></script>
+
+    <audio id="rejectSound" src="Assets/sound-wow.mp3" preload="auto"></audio>
+
+    <script>
+        let forgiveClicks = 0;
+        const forgiveMessages = [
+            "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
+            "Я ТЕБЕ РУССКИМ ЯЗЫКОМ ГОВОРЮ НЕ НАДО. ВОТ ЗАЧЕМ ТЫ СНОВА НАЖАЛА",
+            "ЖЕНЩИНАА!! УБЕРИ РУКИ С ЭКРАНА И ПОКИНЬ САЙТ",
+            "Ты серьезно его готово простить, за такое ужасное поведение? ДИНАМИТ, ИГНОРИТ И ТЫ ГОТОВА ПРОСТО ПРОСТИТЬ"
+        ];
+
+        function playSound(soundId) {
+            const audio = document.getElementById(soundId);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio play blocked: ", e));
+            }
+        }
+
+        function forgiveClick() {
+            forgiveClicks++;
+            const msgEl = document.getElementById('forgiveMsg');
+            msgEl.textContent = forgiveMessages[Math.min(forgiveClicks, forgiveMessages.length) - 1];
+            const btn = document.getElementById('forgiveBtn');
+            btn.classList.remove('btn-reject-shake');
+            void btn.offsetWidth;
+            btn.classList.add('btn-reject-shake');
+            playSound('rejectSound');
+            if (forgiveClicks >= 4) {
+                document.getElementById('finalForgiveBtn').style.display = 'block';
+            }
+        }
+
+        function finalForgive() {
+            alert('Спасибо! ❤️');
+        }
+    </script>
 </body>
 </html>
