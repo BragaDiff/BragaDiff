@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Очередь Игр на Стриме</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white font-sans p-6">
+    <div class="max-w-4xl mx-auto">
+        <!-- Заголовок и статистика -->
+        <header class="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
+            <h1 class="text-3xl font-bold text-purple-500">🎮 Очередь Игр</h1>
+            <div class="text-right text-sm text-gray-400">
+                <p>Всего игр заказано: <span id="stat-total" class="text-white font-bold">0</span></p>
+                <p>Пройдено: <span id="stat-green stat-completed" class="text-green-400 font-bold">0</span></p>
+            </div>
+        </header>
+
+        <!-- Блок "Сейчас играем" -->
+        <div class="bg-purple-900 rounded-lg p-6 mb-8 shadow-lg border border-purple-500">
+            <h2 class="text-xl font-bold mb-2 uppercase text-purple-300">🔥 Сейчас играем</h2>
+            <div id="current-game" class="text-2xl font-bold text-white">Нет активной игры</div>
+            <div id="current-viewer" class="text-sm text-gray-300 mt-1"></div>
+        </div>
+
+        <!-- Инструкция -->
+        <div class="bg-gray-800 rounded-lg p-4 mb-8 text-sm text-gray-300">
+            <h3 class="font-bold text-white mb-2">📌 Как добавить игру в очередь?</h3>
+            <ol class="list-decimal pl-5 space-y-1">
+                <li>Перейдите по ссылке на <a href="https://www.donationalerts.com" target="_blank" class="text-blue-400 hover:underline">DonationAlerts</a>.</li>
+                <li>Задонатьте сумму от <b>50 ₽</b> (чем больше сумма — тем <b>выше</b> игра в очереди!).</li>
+                <li>В тексте сообщения <b>обязательно</b> напишите название игры.</li>
+            </ol>
+        </div>
+
+        <!-- Очередь -->
+        <h2 class="text-2xl font-bold mb-4">📋 Список ожидания</h2>
+        <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg">
+            <table class="w-full text-left">
+                <thead class="bg-gray-700 text-gray-300">
+                    <tr>
+                        <th class="p-4 w-16">#</th>
+                        <th class="p-4">Игра</th>
+                        <th class="p-4">Заказал</th>
+                        <th class="p-4">Донат</th>
+                        <th class="p-4 w-32">Статус</th>
+                    </tr>
+                </thead>
+                <tbody id="queue-list" class="divide-y divide-gray-700">
+                    <!-- Рендерится через JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
