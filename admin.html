@@ -1,0 +1,55 @@
+<div class="container">
+        <div class="video-container">
+            <video autoplay loop muted playsinline>
+                <source src="Assets/card-bg.mp4" type="video/mp4">
+                Ваш браузер не поддерживает видео.
+            </video>
+        </div>
+
+        <div id="forgiveMsg" class="msg-box">
+            Нажми на кнопку ниже...
+        </div>
+
+        <button id="forgiveBtn" class="btn" onclick="forgiveClick()">Простить</button>
+        <button id="finalForgiveBtn" class="btn btn-success" onclick="finalForgive()">ТОЧНО ПРОСТИТЬ ❤️</button>
+    </div>
+
+    <audio id="rejectSound" src="Assets/sound-wow.mp3" preload="auto"></audio>
+
+    <script>
+        let forgiveClicks = 0;
+        const forgiveMessages = [
+            "НЕ ДОСТОИН ТОЛЬКО НЕ НАДО ЕЩЕ РАЗ НАЖИМАТЬ ОН ТВАРЬ ПОЙМИ! Я ТО ЗНАЮ ПОВЕРЬ",
+            "Я ТЕБЕ РУССКИМ ЯЗЫКОМ ГОВОРЮ НЕ НАДО. ВОТ ЗАЧЕМ ТЫ СНОВА НАЖАЛА",
+            "ЖЕНЩИНАА!! УБЕРИ РУКИ С ЭКРАНА И ПОКИНЬ САЙТ",
+            "Ты серьезно его готово простить, за такое ужасное поведение? ДИНАМИТ, ИГНОРИТ И ТЫ ГОТОВА ПРОСТО ПРОСТИТЬ"
+        ];
+
+        function playSound(soundId) {
+            const audio = document.getElementById(soundId);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio play blocked: ", e));
+            }
+        }
+
+        function forgiveClick() {
+            forgiveClicks++;
+            const msgEl = document.getElementById('forgiveMsg');
+            msgEl.textContent = forgiveMessages[Math.min(forgiveClicks, forgiveMessages.length) - 1];
+            const btn = document.getElementById('forgiveBtn');
+            btn.classList.remove('btn-reject-shake');
+            void btn.offsetWidth;
+            btn.classList.add('btn-reject-shake');
+            playSound('rejectSound');
+            if (forgiveClicks >= 4) {
+                document.getElementById('finalForgiveBtn').style.display = 'block';
+            }
+        }
+
+        function finalForgive() {
+            alert('Спасибо! ❤️');
+        }
+    </script>
+</body>
+</html>
