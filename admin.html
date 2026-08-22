@@ -4,61 +4,69 @@
     <meta charset="UTF-8">
     <title>Админка Очереди</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Библиотека для подключения к DonationAlerts -->
     <script src="https://unpkg.com/centrifuge@3.1.0/dist/centrifuge.min.js"></script>
+    <!-- Подключение Firebase с Авторизацией -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 </head>
 <body class="bg-gray-100 text-gray-900 p-6">
     <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold text-gray-800 mb-6">⚙️ Управление очередью</h1>
-        
-        <!-- НАСТРОЙКИ DONATIONALERTS -->
-        <div class="bg-orange-50 border border-orange-200 p-4 rounded-lg shadow-sm mb-6">
-            <h2 class="font-bold text-orange-600 flex items-center gap-2 mb-3">
-                🔌 Подключение DonationAlerts
-            </h2>
-            <div class="flex gap-4 items-center">
-                <input type="password" id="da-token-input" placeholder="Вставьте токен виджета из DA..." class="border p-2 rounded flex-1 focus:ring-2 focus:ring-orange-500 outline-none">
-                <button onclick="saveDAToken()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-6 py-2 rounded shadow transition">
-                    Подключить
+
+        <!-- БЛОК АВТОРИЗАЦИИ -->
+        <div id="login-panel" class="bg-white p-8 rounded-lg shadow-lg max-w-md mx-auto mt-20">
+            <h2 class="text-2xl font-bold mb-4 text-center">Вход в админку</h2>
+            <input type="email" id="auth-email" placeholder="Email" class="w-full border p-2 mb-4 rounded outline-none focus:ring-2 focus:ring-blue-500">
+            <input type="password" id="auth-password" placeholder="Пароль" class="w-full border p-2 mb-4 rounded outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded">Войти</button>
+            <p id="auth-error" class="text-red-500 text-sm mt-2 hidden">Ошибка входа</p>
+        </div>
+
+        <!-- АДМИН ПАНЕЛЬ (скрыта до входа) -->
+        <div id="admin-panel" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-green-600 font-bold">✅ Вы авторизованы</p>
+                <button onclick="logout()" class="text-sm bg-gray-300 hover:bg-gray-400 px-3 py-1 rounded">Выйти</button>
+            </div>
+
+            <!-- Настройки DA -->
+            <div class="bg-orange-50 border border-orange-200 p-4 rounded-lg shadow-sm mb-6">
+                <h2 class="font-bold text-orange-600 flex items-center gap-2 mb-3">🔌 DonationAlerts</h2>
+                <div class="flex gap-4">
+                    <input type="password" id="da-token-input" placeholder="Токен из DA..." class="border p-2 rounded flex-1">
+                    <button onclick="saveDAToken()" class="bg-orange-500 hover:bg-orange-600 text-white px-6 rounded shadow">Подключить</button>
+                </div>
+                <p id="da-status" class="text-sm mt-2 text-gray-500">Статус: <span class="font-bold text-red-500">Отключено</span></p>
+            </div>
+
+            <!-- Добавить вне очереди -->
+            <div class="bg-white p-4 rounded-lg shadow-lg mb-6 flex gap-4">
+                <input type="text" id="streamer-game-input" placeholder="Название игры..." class="border p-2 rounded flex-1">
+                <button onclick="addStreamerGame()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded shadow">
+                    + Вне очереди
                 </button>
             </div>
-            <p id="da-status" class="text-sm mt-2 text-gray-500">Статус: <span class="font-bold text-red-500">Отключено</span></p>
-        </div>
 
-        <!-- Блок добавления игры стримером -->
-        <div class="bg-white p-4 rounded-lg shadow-lg mb-6 flex gap-4">
-            <input type="text" id="streamer-game-input" placeholder="Название игры..." class="border p-2 rounded flex-1 focus:ring-2 focus:ring-purple-500 outline-none">
-            <button onclick="addStreamerGame()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded shadow">
-                + Добавить вне очереди
-            </button>
-        </div>
+            <div class="mb-6 flex gap-4">
+                <button onclick="simulateDonationAlerts()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">💸 Тестовый донат</button>
+                <button onclick="clearAll()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">🗑 Очистить базу</button>
+            </div>
 
-        <!-- Кнопки управления -->
-        <div class="mb-6 flex gap-4">
-            <button onclick="simulateDonationAlerts()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
-                💸 Тестовый донат
-            </button>
-            <button onclick="clearAll()" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow">
-                🗑 Очистить базу
-            </button>
-        </div>
-
-        <!-- Таблица админа -->
-        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-            <table class="w-full text-left">
-                <thead class="bg-gray-200">
-                    <tr>
-                        <th class="p-4">Игра</th>
-                        <th class="p-4">Заказал</th>
-                        <th class="p-4">Донат</th>
-                        <th class="p-4">Статус</th>
-                        <th class="p-4">Действия</th>
-                    </tr>
-                </thead>
-                <tbody id="admin-list" class="divide-y divide-gray-100">
-                    <!-- Рендерится через JS -->
-                </tbody>
-            </table>
+            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                <table class="w-full text-left">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-4">Игра</th>
+                            <th class="p-4">Заказал</th>
+                            <th class="p-4">Донат</th>
+                            <th class="p-4">Статус</th>
+                            <th class="p-4">Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-list" class="divide-y divide-gray-100"></tbody>
+                </table>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
